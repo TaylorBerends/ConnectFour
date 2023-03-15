@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="javax.swing.AbstractAction"/>
+    <fullyQualifiedTypeName name="javax.swing.KeyStroke"/>
+    <fullyQualifiedTypeName name="java.awt.Graphics"/>
+    <fullyQualifiedTypeName name="javax.swing.Action"/>
+    <fullyQualifiedTypeName name="java.awt.event.WindowEvent"/>
+</qualifiedTypeNameHistroy>

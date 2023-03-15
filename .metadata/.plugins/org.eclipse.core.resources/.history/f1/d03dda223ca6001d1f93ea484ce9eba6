@@ -1,0 +1,93 @@
+package main;
+
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+
+
+public class Cursor {
+    public int x,y;
+    public BufferedImage player1, player2;
+    public int speed = 84;
+    public int col = 0;
+
+    GamePanel gp;
+    KeyHandler keyH;
+    Board board;
+
+    public Cursor(GamePanel gp, KeyHandler keyH, Board board) {
+        this.gp = gp;
+        this.keyH = keyH;
+        this.board = board;
+
+        setDefaultValues();
+        getCursorImage();
+    }
+
+    public void setDefaultValues() {
+        x = 0;
+        y = 0;
+    }
+
+    public void getCursorImage() {
+        try {
+            player1 = ImageIO.read(getClass().getResourceAsStream("/cursors/player1.png"));
+            player2 = ImageIO.read(getClass().getResourceAsStream("/cursors/player2.png"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update() {
+    	boolean enterAttempt = false;
+		if(keyH.rightPressed == true && x + speed < 520 ) {
+            x += speed;
+            if(speed == 84) {
+            	col++;
+            }
+            System.out.println(col);
+            speed = 0;
+        }
+		
+		
+        if(keyH.leftPressed == true && x - speed >= 0) {
+        	x-= speed;
+        	if(speed == 84) {
+        		col--;
+        	}
+        	System.out.println(col);
+        	speed = 0;
+        }
+        
+        if(keyH.rightPressed == false && keyH.leftPressed == false) {
+        	speed = 84;
+        }
+        
+        if(keyH.dropPressed == true) {
+        	enterAttempt = true;
+        }
+        if(keyH.dropPressed == false && enterAttempt == true) {
+        	board.GameTurn(col);
+        	enterAttempt = false;
+        }
+        
+        
+    }
+
+    public void draw(Graphics2D g2) {
+
+        BufferedImage image = null;
+        if(gp.board.playerCount == 1) {
+            image = player1;
+        } else {
+            image = player2;
+        }
+        //System.out.println(x);
+        g2.drawImage(image, x, y, 100, 100, null);
+    }
+}
+

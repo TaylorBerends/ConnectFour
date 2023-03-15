@@ -1,0 +1,113 @@
+package main;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
+public class MenuHandler {
+	GamePanel gp;
+	int screenWidth = 605;
+	int commandNum = 0;
+	
+	Action upAction;
+	Action downAction;
+	Action enterAction;
+	
+	public MenuHandler(GamePanel gp) {
+		this.gp = gp;
+		
+		upAction = new UpAction();
+		downAction = new DownAction();
+		
+		gp.getInputMap().put(KeyStroke.getKeyStroke("released UP"), "upAction");
+        gp.getInputMap().put(KeyStroke.getKeyStroke("released w"), "wAction");
+        
+        gp.getActionMap().put("upAction", upAction);
+        gp.getActionMap().put("wAction", upAction);
+        
+        gp.getInputMap().put(KeyStroke.getKeyStroke("released DOWN"), "downAction");
+        gp.getInputMap().put(KeyStroke.getKeyStroke("released s"), "sAction");
+        
+        gp.getActionMap().put("downAction", downAction);
+        gp.getActionMap().put("sAction", downAction);
+	}
+	
+	void drawTitleScreen(Graphics g2) {
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 88F));
+		String text = "Connect Four";
+		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		int x = screenWidth/2 - length/2;
+		int y = 100;
+		
+		//shadow
+		g2.setColor(Color.black);
+		g2.drawString(text, x+4, y+4);
+		//main text
+		g2.setColor(Color.blue);
+		g2.drawString(text, x, y);
+		
+		//menu
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
+		
+		text = "PLAYER VS PLAYER";
+		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		x = screenWidth/2 - length/2;
+		y = 300;
+		g2.drawString(text, x, y);
+		if(commandNum == 0) {
+			g2.fillOval(x - 25, y - (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight()/2, 20, 20);
+		}
+		
+		text = "PLAYER VS COMPUTER (W.I.P.)";
+		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		x = screenWidth/2 - length/2;
+		y = 380;
+		g2.drawString(text, x, y);
+		if(commandNum == 1) {
+			g2.fillOval(x - 25, y - (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight()/2, 20, 20);
+		}
+		
+		text = "EXIT";
+		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		x = screenWidth/2 - length/2;
+		y = 460;
+		g2.drawString(text, x, y);
+		if(commandNum == 2) {
+			g2.fillOval(x - 25, y - (int)g2.getFontMetrics().getStringBounds(text, g2).getHeight()/2, 20, 20);
+		}
+	}
+	
+	public class UpAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(commandNum - 1 >= 0) {
+				commandNum -= 1;
+			}
+			System.out.println("input Recognized");
+		}
+    }
+	
+	public class DownAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(commandNum + 1 <= 2) {
+				commandNum += 1;
+			}
+			System.out.println("input recognized");
+		}
+    }
+	
+	public class EnterAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			System.out.println("input recognized");
+		}
+    }
+}

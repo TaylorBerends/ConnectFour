@@ -1,0 +1,125 @@
+package main;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowEvent;
+
+public class GamePanel extends JPanel implements Runnable {
+
+	//screen settings
+    final int screenWidth = 605;
+    final int screenHeight = 620;
+    final int boardHeight = 520;
+    final int boardY = screenHeight - boardHeight;
+
+    int FPS = 60;
+
+    Thread gameThread;
+    Board board = new Board();
+    Cursor cursor = new Cursor(this, board);
+    MenuHandler mh = new MenuHandler(this);
+    
+    //game states
+    int gameState;
+    final int titleState = 0;
+    final int playState = 1;
+    final int retryMenuState = 2;
+    final int quitGame = 3;
+
+
+
+    public GamePanel() {
+        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        this.setBackground(Color.WHITE);
+        this.setDoubleBuffered(true);
+        this.setFocusable(true);
+        this.requestFocus();
+        gameState = titleState;
+    }
+
+    public void startGameThread() {
+
+        gameThread = new Thread(this);
+        gameThread.start();
+    }
+
+    @Override
+    public void run() {
+        int win = 0;
+        double drawInterval = 1000000000/FPS; //1000000000 nanoseconds = 1 second; 0.01666 seconds
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
+        long timer = 0;
+        int drawCount = 0;
+        while(win == 0)
+        {
+
+            currentTime = System.nanoTime();
+            delta += (currentTime - lastTime) / drawInterval;
+            timer += (currentTime - lastTime);
+            lastTime = currentTime;
+
+            if(delta >= 1) {
+
+                //draw the screen
+                repaint();
+                delta--;
+                drawCount++;
+            }
+
+            if(timer >= 1000000000) {
+                //System.out.println("FPS:" + drawCount);
+                drawCount = 0;
+                timer = 0;
+            }
+
+            if(board.win) {
+            	repaint();
+            	win = board.playerCount;
+            }
+            
+            
+        }
+    }
+
+
+    
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D)g;
+        
+        switch(gameState) {
+        	case titleState:
+        		mh.setActionMap();
+        		mh.drawTitleScreen(g2);
+        		break;
+        	case playState:
+        		cursor.setActionMap();
+        		//board draw
+                g2.setPaint(Color.BLUE);
+                g2.fillRect(0,boardY,screenWidth-1,boardHeight);
+                board.drawBoard(g2, boardY);
+                //cursor draw
+                cursor.draw(g2);
+        		break;
+        	case retryMenuState:
+        		break;
+        }
+        
+        
+        
+
+    }
+    
+    public void paintRetry(Graphics g) {
+    	super.paintComponent(g);
+    	
+    	Graphics2D g2 = (Graphics2D)g;
+    	
+    	//draws 
+    }
+
+    
+}

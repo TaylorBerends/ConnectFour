@@ -1,0 +1,121 @@
+package main;
+
+
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
+
+
+public class Cursor {
+	Action leftAction;
+	Action rightAction;
+	Action dropAction;
+	
+    public int x,y;
+    public BufferedImage player1, player2;
+    public int speed = 84;
+    public int col = 0;
+
+    GamePanel gp;
+    Board board;
+
+    public Cursor(GamePanel gp, Board board) {
+        this.gp = gp;
+        this.board = board;
+
+        leftAction = new LeftAction();
+        rightAction = new RightAction();
+        dropAction = new DropAction();
+        
+        
+        gp.getInputMap().put(KeyStroke.getKeyStroke("pressed LEFT"), "leftAction");
+        gp.getInputMap().put(KeyStroke.getKeyStroke('a'), "aAction");
+        
+        gp.getActionMap().put("aAction", leftAction);
+        gp.getActionMap().put("leftAction", leftAction);
+        
+        gp.getInputMap().put(KeyStroke.getKeyStroke("pressed RIGHT"), "rightAction");
+        gp.getInputMap().put(KeyStroke.getKeyStroke('d'), "dAction");
+        
+        gp.getActionMap().put("dAction", rightAction);
+        gp.getActionMap().put("rightAction", rightAction);
+        
+        gp.getInputMap().put(KeyStroke.getKeyStroke("released DOWN"), "downAction");
+        gp.getActionMap().put("downAction", dropAction);
+        
+        
+        setDefaultValues();
+        getCursorImage();
+    }
+
+    public void setDefaultValues() {
+        x = 0;
+        y = 0;
+    }
+
+    public void getCursorImage() {
+        try {
+            player1 = ImageIO.read(getClass().getResourceAsStream("/cursors/player1.png"));
+            player2 = ImageIO.read(getClass().getResourceAsStream("/cursors/player2.png"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void draw(Graphics2D g2) {
+
+        BufferedImage image = null;
+        if(gp.board.playerCount == 1) {
+            image = player1;
+        } else {
+            image = player2;
+        }
+        //System.out.println(x);
+        g2.drawImage(image, x, y, 100, 100, null);
+    }
+    
+    
+    public class LeftAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(x - 84 >= 0) {
+				x -= 84;
+				col--;
+			}
+		}
+    }
+    
+    public class RightAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(x + 84 < 520) {
+				x += 84;
+				col++;
+			}
+		}
+    	
+    }
+    
+    public class DropAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int bottom = board.FindBottom(col);
+			if(bottom != -1) {
+				board.GameTurn(col, bottom);
+			}
+		}
+    	
+    }
+    
+}
+

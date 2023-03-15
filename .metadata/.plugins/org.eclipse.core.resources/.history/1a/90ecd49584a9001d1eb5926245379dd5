@@ -1,0 +1,81 @@
+package main;
+
+import java.awt.*;
+
+public class Board {
+
+    Hole[][] holeCollection = new Hole[6][7]; //creates array of holes that will act as our board
+    boolean win = false;
+
+    //constructor fills holeCollection with hole objects then starts game
+    public Board() {
+        for (int r = 0; r < 6; r++) {
+            for (int c = 0; c < 7; c++) {
+                holeCollection[r][c] = new Hole(this, r, c); //passes reference to Board and its coordinates in board
+            }
+        }
+    }
+    
+    int playerCount = 1;
+
+    public int GameTurn(int colChoice, int emptyRow) {
+        
+
+        emptyRow = FindBottom(colChoice);  //gets row from FindBottom
+        if(emptyRow == -1) {
+        	
+        }
+
+        holeCollection[emptyRow][colChoice].FillHole(playerCount); //fills hole
+        if(holeCollection[emptyRow][colChoice].CheckForFour()) {
+            win = true;
+            return playerCount;
+        }
+
+        //player update
+        playerCount++;
+        if (playerCount == 3) {
+            playerCount = 1;
+        }
+        return 0;
+
+    }
+
+    //finds lowest unfilled position in collumn
+    public int FindBottom(int colChoice) {
+        for (int r = 5; r >= 0; r--) {
+            if (!holeCollection[r][colChoice].filled) {
+                return r;
+            }
+        }
+        return -1;
+    }
+
+    public void drawBoard(Graphics2D g2, int boardY) {
+        int circleY = boardY + 10;
+        int circleX = 10;
+
+        for(int c = 0; c < 7; c++)
+        {
+            for(int r = 0; r < 6; r++)
+            {
+                if(holeCollection[r][c].filledBy == 1)
+                {
+                    g2.setPaint(Color.RED);
+                }
+                else if(holeCollection[r][c].filledBy == 2)
+                {
+                    g2.setColor(Color.YELLOW);
+                }
+                else
+                {
+                    g2.setColor(Color.white);
+                }
+                g2.fillOval(circleX, circleY, 75, 75);
+                circleY += 85;
+            }
+            circleX += 85;
+            circleY = boardY + 10;
+        }
+    }
+}

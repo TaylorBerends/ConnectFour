@@ -1,0 +1,104 @@
+package main;
+
+
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
+
+
+public class Cursor {
+	Action leftAction;
+    public int x,y;
+    public BufferedImage player1, player2;
+    public int speed = 84;
+    public int col = 0;
+
+    GamePanel gp;
+    KeyHandler keyH;
+    Board board;
+
+    public Cursor(GamePanel gp, KeyHandler keyH, Board board) {
+        this.gp = gp;
+        this.keyH = keyH;
+        this.board = board;
+
+        leftAction = new LeftAction();
+        
+        gp.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "leftAction");
+        gp.getActionMap().put("leftAction", leftAction);
+        
+        
+        setDefaultValues();
+        getCursorImage();
+    }
+
+    public void setDefaultValues() {
+        x = 0;
+        y = 0;
+    }
+
+    public void getCursorImage() {
+        try {
+            player1 = ImageIO.read(getClass().getResourceAsStream("/cursors/player1.png"));
+            player2 = ImageIO.read(getClass().getResourceAsStream("/cursors/player2.png"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update() {
+    	
+        
+        
+    }
+
+    public void draw(Graphics2D g2) {
+
+        BufferedImage image = null;
+        if(gp.board.playerCount == 1) {
+            image = player1;
+        } else {
+            image = player2;
+        }
+        //System.out.println(x);
+        g2.drawImage(image, x, y, 100, 100, null);
+    }
+    
+    public class LeftAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			x -= 84;
+			col--;
+		}
+    	
+    }
+    
+    public class RightAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			x += 84;
+			col++;
+		}
+    	
+    }
+    
+    public class DropAction extends AbstractAction {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			board.GameTurn(col);
+		}
+    	
+    }
+    
+}
+
